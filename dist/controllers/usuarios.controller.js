@@ -32,13 +32,30 @@ const getUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.getUsuario = getUsuario;
-const postUsuario = (req, res) => {
+const postUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { body } = req;
-    res.json({
-        msg: "post usuario",
-        body
-    });
-};
+    try {
+        const exitseEmail = yield usuario_model_1.default.findOne({
+            where: {
+                email: body.email
+            }
+        });
+        if (exitseEmail) {
+            return res.status(400).json({
+                msg: "Ya existe un usuario con el email " + body.email
+            });
+        }
+        const usuario = usuario_model_1.default.build(body);
+        yield usuario.save();
+        res.json(usuario);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: "Hable con el administadror"
+        });
+    }
+});
 exports.postUsuario = postUsuario;
 const putUsuario = (req, res) => {
     const { id } = req.params;
